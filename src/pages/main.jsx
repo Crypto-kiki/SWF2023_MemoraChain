@@ -133,8 +133,8 @@ const Main = () => {
                       <Link to="/mint" className="text-lg">
                         <div>MINT</div>
                       </Link>
-                      <Link to="/partsshop" className="text-lg">
-                        <div>STICKER</div>
+                      <Link to="/gallery" className="text-lg">
+                        <div>GALLERY</div>
                       </Link>
                       {account && (
                         <Link to="/myPage" className="text-lg">
@@ -161,8 +161,8 @@ const Main = () => {
               <Link to="/mint">
                 <div>MINT</div>
               </Link>
-              <Link to="/partsshop">
-                <div className="mx-10">STICKER</div>
+              <Link to="/gallery">
+                <div className="mx-10">GALLERY</div>
               </Link>
               <Link
                 to={account ? "/mypage" : ""}
@@ -182,9 +182,12 @@ const Main = () => {
             </div>
           </header>
         </div>
-        <div className="bg-[#F3EED4]">
-          <div>Memora Chain</div>
-        </div>
+        <video autoPlay muted loop width="100%" height="100%">
+          <source
+            src={`${process.env.PUBLIC_URL}/image/memorachain.mp4`}
+            type="video/mp4"
+          />
+        </video>
         <div className="bg-[#E3C9B2] mainSecondDiv mainmobileSecondDiv   h-[40vh] md:h-[80vh] relative justify-center items-center my-2 md:mt-3"></div>
         <div className="mainmobileThirdDiv mainThirdDiv w-full h-[48vh] md:h-[90vh]  md:mt-3"></div>
         <div className="flex w-full flex-col md:w-full md:flex-row items-center md:justify-center  font-habin  mt-2 md:mt-3 bg-gradient-to-b from-[#85A0BD] from-78.1% via-[#CEC3B7] via-86% via-[#D2B9A6] to-[#B4958D] to-100%  px-15 md:px-20 py-12 md:pl-32 md:pr-16">

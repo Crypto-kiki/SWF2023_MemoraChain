@@ -3,9 +3,9 @@ import { AccountContext } from "./AccountContext";
 import { useEffect, useState } from "react";
 import Main from "./pages/main";
 import Mint from "./pages/mint";
-import MyPage from "./pages/myPage";
-import Parts from "./pages/parts";
+
 import { AnimatePresence } from "framer-motion";
+import Gallery from './pages/gallery';
 
 function App() {
   const [account, setAccount] = useState(""); // 계정 상태 저장
@@ -16,9 +16,8 @@ function App() {
         <AnimatePresence>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/mint" element={<Mint />} />
-            <Route path="/partsshop" element={<Parts />} />
-            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/mint" element={<Mint />} />           
+            <Route path="/gallery" element={<Gallery />} />
           </Routes>
         </AnimatePresence>
       </AccountContext.Provider>
