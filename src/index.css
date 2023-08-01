@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+/* body {
+  font-family: 'Roboto', sans-serif;
+} */
+
+@import url("https://fonts.googleapis.com/css2?family=Kablammo&display=swap");
+
+#fontChange {
+  font-family: "Kablammo", cursive;
+}
+
+@font-face {
+  font-family: "MyFont";
+  src: url("../public/font/Kablammo-Regular.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../public/font/Inter.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../public/font/Montserrat.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+@font-face {
+  font-family: "Popppins";
+  src: url("../public/font/Popppins.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+@font-face {
+  font-family: "roboto";
+  src: url("../public/font/roboto.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+@font-face {
+  font-family: "Jomolhari";
+  src: url("../public/font/Jomolhari.ttf") format("truetype");
+  /* 다른 폰트 형식을 사용할 경우 format을 조정합니다. */
+}
+
+#fontChange {
+  font-family: "MyFont", sans-serif;
+}
+
+#fontChange {
+  font-family: "Montserrat", sans-serif;
+}
+
+#fontChange {
+  font-family: "roboto", sans-serif;
+}
+
+#fontChange {
+  font-family: "Popppins", sans-serif;
+}
+
+#fontChange {
+  font-family: "Inter", sans-serif;
+}
+
+#fontChange {
+  font-family: "Jomolhari", sans-serif;
+}
+
+.film-left {
+  background-image: url(../public/image/left.png);
+  background-size: cover;
+}
+
+.film-right {
+  background-image: url(../public/image/right.png);
+  background-size: cover;
+}
+
+.airplane {
+  background-image: url(../public/image/AIRPLANE.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (min-width: 768px) {
+  .mainSecondDiv {
+    background-image: url(../public/image/mainSecondDiv2.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+@media (max-width: 767px) {
+  .mainmobileSecondDiv {
+    background-image: url(../public/image/mainmobile/mainbackground1.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .mainThirdDiv {
+    background-image: url(../public/image/mainThirdDiv.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .mainmobileThirdDiv {
+    background-image: url(../public/image/mainmobile/mainbackground2.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .mainFourthDiv {
+    background-image: url(../public/image/mainFourthDiv.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .mainmobileFourthDiv {
+    background-image: url(../public/image/mainmobile/background3.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+/* Modal Effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modal {
+  animation: fadeIn 0.7s;
+}
+
+.modalhidden {
+  animation: fadeOut 0.7s;
+}
+
+.myPageBackground {
+  background-image: url(../public/image/myPage/background2.png);
+  color: #f3f2dc;
+  background-position: center;
+  background-repeat: repeat;
+  background-size: auto;
+}
+
+.modalLetter {
+  background-image: url(../public/image/myPage/modal_letter.png);
+  color: #aa9785;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* @media (min-width: 768px) {
+  .mintBackground {
+    background-image: url(../public/image/mint/background.png);
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    animation: moveBackground 20s linear infinite;
+  }
+} */
+
+@media (max-width: 767px) {
+  .mintmobileBackground {
+    background-image: url(../public/image/mint/backgroundmobile.png);
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    animation: moveBackground 20s linear infinite;
+  }
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* video effect */
+.video {
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
+
+.video.show {
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .partsBackground {
+    background-image: url(../public/image/parts/background.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
+
+@media (max-width: 767px) {
+  .partsmobileBackground {
+    background-image: url(../public/image/parts/partsbackground.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: contain 100vh;
+  }
+}
+
+/* 스크롤 바 커스텀 */
+body::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+body::-webkit-scrollbar-thumb {
+  height: 30%; /* 스크롤바의 길이 */
+  background: #f3eed460; /* 스크롤바의 색상 */
+
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #f3eed460; /*스크롤바 뒷 배경 색상*/
+}
+
+/* 임의의 영역 생성 */
+.scrollBar {
+  overflow-y: scroll;
+}
+
+.scrollBar::-webkit-scrollbar {
+  width: 10px; /* 스크롤바의 너비 */
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+  height: 30%; /* 스크롤바의 길이 */
+  background: #f3eed460; /* 스크롤바의 색상 */
+
+  border-radius: 10px;
+}
+
+.scrollBar::-webkit-scrollbar-track {
+  background: #aeaeae60; /*스크롤바 뒷 배경 색상*/
+}
+
+.itemBackground {
+  background-image: url(../public/image/parts/itemBackground2.png);
+  background-repeat: no-repeat;
+  background-size: 1160px 584px;
+  background-position: center;
+}
+
+.itemModalBackgroundLengthy {
+  background-image: url(../public/image/parts/nftLengthy.png);
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.itemModalBackgroundWide {
+  background-image: url(../public/image/parts/nftWide.png);
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.textarea {
+  vertical-align: middle;
+}
