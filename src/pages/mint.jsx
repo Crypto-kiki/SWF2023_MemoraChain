@@ -372,22 +372,22 @@ const Mint = () => {
       const totalLength = data.size;
 
       // 데이터 분할 크기 계산 (예시로 3등분)
-      const chunkSize = Math.ceil(totalLength / 3);
+      const dataSize = Math.ceil(totalLength / 3);
 
       // 데이터를 세 개의 일부로 분할
-      const chunk1 = data.slice(0, chunkSize);
-      const chunk2 = data.slice(chunkSize, chunkSize * 2);
-      const chunk3 = data.slice(chunkSize * 2);
+      const blob1 = data.slice(0, dataSize);
+      const blob2 = data.slice(dataSize, dataSize * 2);
+      const blob3 = data.slice(dataSize * 2);
 
       // 각 조각을 Uint8Array로 변환
-      const chunk1Data = await chunk1.arrayBuffer();
-      const chunk2Data = await chunk2.arrayBuffer();
-      const chunk3Data = await chunk3.arrayBuffer();
+      const blob1Data = await blob1.arrayBuffer();
+      const blob2Data = await blob2.arrayBuffer();
+      const blob3Data = await blob3.arrayBuffer();
 
       // 각 데이터를 WordArray로 변환
-      const wordArray1 = CryptoJS.lib.WordArray.create(chunk1Data);
-      const wordArray2 = CryptoJS.lib.WordArray.create(chunk2Data);
-      const wordArray3 = CryptoJS.lib.WordArray.create(chunk3Data);
+      const wordArray1 = CryptoJS.lib.WordArray.create(blob1Data);
+      const wordArray2 = CryptoJS.lib.WordArray.create(blob2Data);
+      const wordArray3 = CryptoJS.lib.WordArray.create(blob3Data);
 
       // 각각의 데이터를 암호화하여 FormData에 추가
       const encrypted1 = CryptoJS.AES.encrypt(
@@ -405,15 +405,15 @@ const Mint = () => {
 
       // 각 파일 객체를 FormData에 추가
       const formData1 = new FormData();
-      formData1.append("file", chunk1);
+      formData1.append("file", blob1);
       formData1.append("encryptedData", encrypted1);
 
       const formData2 = new FormData();
-      formData2.append("file", chunk2);
+      formData2.append("file", blob2);
       formData2.append("encryptedData", encrypted2);
 
       const formData3 = new FormData();
-      formData3.append("file", chunk3);
+      formData3.append("file", blob3);
       formData3.append("encryptedData", encrypted3);
 
       // 각각의 업로드를 수행
@@ -488,8 +488,10 @@ const Mint = () => {
 
   useEffect(() => {
     if (encryptedIpfs3) {
+      console.log(encryptedIpfs1);
+      console.log(encryptedIpfs2);
+      console.log(encryptedIpfs3);
       uploadMetadata();
-      // decryptIpfs();
     }
   }, [encryptedIpfs3]);
 

@@ -26,6 +26,7 @@ import { Avartar } from "../components/Avatar";
 import CameraControls from "../components/CameraControls";
 import { IoCameraReverseOutline } from "react-icons/io5";
 import { AiOutlineHome } from "react-icons/ai";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 const GOLDENRATIO = 1.61803398875;
 
@@ -41,6 +42,7 @@ const Gallery = () => {
   const [arrayOfCity, setArrayOfCity] = useState([]);
   const [arrayOfAddress, setArrayOfAddress] = useState([]);
   const [arrayOfWeather, setArrayOfWeather] = useState([]);
+  const [arrayOfMessage, setArrayOfMessage] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(true);
@@ -51,7 +53,6 @@ const Gallery = () => {
   const [menu, setMenu] = useState(false);
   const [wide, setWide] = useState([]);
   const [length, setLength] = useState([]);
-  // const [sizetype, setSizetype] =useState();
 
   const connectWithMetamask = async () => {
     try {
@@ -124,6 +125,7 @@ const Gallery = () => {
       const City = [];
       const Address = [];
       const Weather = [];
+      const Message = [];
       const wide2 = [];
       const length2 = [];
       const token = [];
@@ -149,26 +151,32 @@ const Gallery = () => {
         // //eqe
         // setArrayOfImageUrls(imageUrlArray);
         const Metadata = response.data.attributes;
+        console.log(Metadata);
         Country.push({
           country: Metadata[2].value,
-          tokenId: tokenIds[i],
+          image: imageUrl,
         });
         City.push({
           city: Metadata[3].value,
-          tokenId: tokenIds[i],
+          image: imageUrl,
         });
         Address.push({
           address: Metadata[4].value,
-          tokenId: tokenIds[i],
+          image: imageUrl,
         });
         Weather.push({
           weather: Metadata[5].value,
-          tokenId: tokenIds[i],
+          image: imageUrl,
+        });
+        Message.push({
+          message: Metadata[7].value,
+          image: imageUrl,
         });
         setArrayOfCountry(Country);
         setArrayOfCity(City);
         setArrayOfAddress(Address);
         setArrayOfWeather(Weather);
+        setArrayOfMessage(Message);
       }
       setWide(wide2);
       setLength(length2);
@@ -201,21 +209,23 @@ const Gallery = () => {
     // tokenIds.length 만큼 반복합니다
     for (let i = 0; i < wide.length; i++) {
       const metadataItem = arrayOfCountry.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === wide[i]
       );
       const CountryValue = metadataItem ? metadataItem.country : null;
-      const metadataItem2 = arrayOfCity.find(
-        (item) => item.tokenId === tokenIds[i]
-      );
+      const metadataItem2 = arrayOfCity.find((item) => item.image === wide[i]);
       const CityValue = metadataItem2 ? metadataItem2.city : null;
       const metadataItem3 = arrayOfAddress.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === wide[i]
       );
       const AddressValue = metadataItem3 ? metadataItem3.address : null;
       const metadataItem4 = arrayOfWeather.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === wide[i]
       );
       const WeatherValue = metadataItem4 ? metadataItem4.weather : null;
+      const metadataItem5 = arrayOfMessage.find(
+        (item) => item.image === wide[i]
+      );
+      const MessageValue = metadataItem5 ? metadataItem5.message : null;
       imagesArray.push({
         position: [-5.6 + i * 2.5, 2.5, -0.6], // 예시 position, 필요한 값으로 변경할 수 있습니다
         rotation: [0, 0, 0], // 예시 rotation, 필요한 값으로 변경할 수 있습니다
@@ -224,27 +234,33 @@ const Gallery = () => {
         city: CityValue,
         address: AddressValue,
         weather: WeatherValue,
+        tokenId: tokenIds[i],
+        message: MessageValue,
         sizetype: 2,
       });
     }
 
     for (let i = 0; i < length.length; i++) {
       const metadataItem = arrayOfCountry.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === length[i]
       );
       const CountryValue = metadataItem ? metadataItem.country : null;
       const metadataItem2 = arrayOfCity.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === length[i]
       );
       const CityValue = metadataItem2 ? metadataItem2.city : null;
       const metadataItem3 = arrayOfAddress.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === length[i]
       );
       const AddressValue = metadataItem3 ? metadataItem3.address : null;
       const metadataItem4 = arrayOfWeather.find(
-        (item) => item.tokenId === tokenIds[i]
+        (item) => item.image === length[i]
       );
       const WeatherValue = metadataItem4 ? metadataItem4.weather : null;
+      const metadataItem5 = arrayOfMessage.find(
+        (item) => item.image === length[i]
+      );
+      const MessageValue = metadataItem5 ? metadataItem5.message : null;
       imagesArray.push({
         position: [-5.6 + i * 2, 0, -0.6], // 예시 position, 필요한 값으로 변경할 수 있습니다
         rotation: [0, 0, 0], // 예시 rotation, 필요한 값으로 변경할 수 있습니다
@@ -253,6 +269,8 @@ const Gallery = () => {
         city: CityValue,
         address: AddressValue,
         weather: WeatherValue,
+        tokenIds: tokenIds[i],
+        message: MessageValue,
         sizetype: 1,
       });
     }
@@ -263,12 +281,12 @@ const Gallery = () => {
   return (
     <>
       {loading ? (
-        <div className="flex justify-center items-center h-screen bg-gray-900">
-          <div className="relative">
-            <div className="loading-text text-white font-bold text-3xl animate-pulse">
+        <div class="flex justify-center items-center h-screen bg-gray-900">
+          <div class="relative">
+            <div class="loading-text text-white font-bold text-3xl animate-pulse">
               Loading...
             </div>
-            <div className="w-full h-1 bg-white absolute bottom-0 left-0 before:content before:block before:w-full before:h-1 before:bg-blue-500 before:animate-pulse"></div>
+            <div class="w-full h-1 bg-white absolute bottom-0 left-0 before:content before:block before:w-full before:h-1 before:bg-blue-500 before:animate-pulse"></div>
           </div>
         </div>
       ) : tokenIds.length === wide.length + length.length && show ? (
@@ -292,6 +310,8 @@ const Gallery = () => {
                 menu={menu}
                 setMenu={setMenu}
                 setShow={setShow}
+                contract={contract}
+                account={account}
               />
               <mesh rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[50, 50]} />
@@ -309,9 +329,9 @@ const Gallery = () => {
                 />
               </mesh>
             </group>
-            <Avartar />
+            {/* <Avartar /> */}
             <Environment preset="city" />
-            <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={80} />
+            <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={70} />
             <CameraControls />
             <OrbitControls
               enabled={orbitControlsEnabled}
@@ -328,7 +348,16 @@ const Gallery = () => {
             />
           </Canvas>
         </div>
-      ) : null}
+      ) : (
+        <div class="flex justify-center items-center h-screen bg-gray-900">
+          <div class="relative">
+            <div class="loading-text text-white font-bold text-3xl animate-pulse">
+              Loading...
+            </div>
+            <div class="w-full h-1 bg-white absolute bottom-0 left-0 before:content before:block before:w-full before:h-1 before:bg-blue-500 before:animate-pulse"></div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -383,18 +412,20 @@ function Frames({
         }
         clicked.current.parent.getWorldQuaternion(q);
         setPopup(true);
-        setMenu(true);
         setOrbitControlsEnabled(false);
+        const timer = setTimeout(() => {
+          setMenu(true);
+        }, 1500); // 0.5초 후에 setPopup(false) 호출
+        return () => clearTimeout(timer);
       } else {
         p.set(0, 0, 5.5); // 이 부분을 추가하여 클릭시에만 p를 원래 위치로 돌아가게 함
         q.identity();
         setMenu(false);
-        setOrbitControlsEnabled(true);
         const timer = setTimeout(() => {
           setPopup(false);
+          setOrbitControlsEnabled(true);
         }, 1500); // 0.5초 후에 setPopup(false) 호출
         return () => clearTimeout(timer);
-        // setPopup(false);
       }
     }
   });
@@ -425,14 +456,14 @@ function Frames({
       onPointerMissed={() => setLocation("/gallery")}
     >
       {images.map(
-        (props) => <Frame menu={menu} key={props.url} {...props} /> /* prettier-ignore */
+        (props) => <Frame p={p} menu={menu} key={props.url} {...props} /> /* prettier-ignore */
       )}
       <Html position={[p, p, 0]}>
         {/* <button className='bg-white px-2 font-bold text-black rounded-md ml-4 mt-4 border-2 text-md white-space: normal;' onClick={() => setPopup(true)}>Reset</button> */}
         <div className="flex">
           <button
             onClick={() => setShow(false)}
-            className="text-white px-2 ml-4 mt-4"
+            className="text-white px-2 ml-4 mt-4 animate__jackInTheBox"
           >
             <AiOutlineHome size={33} />
           </button>
@@ -445,7 +476,7 @@ function Frames({
         </div>
         {divon && (
           <>
-            <div className="flex flex-col ml-4 mt-4 ">
+            <div className="flex flex-col ml-4 mt-4 animate__animated animate__fadeIn">
               <div className="text-white text-2xl font-bold ">Memora Chain</div>
               <div className="text-white text-2xl ">MetaVerseGallery</div>
             </div>
@@ -458,6 +489,8 @@ function Frames({
 
 function Frame({
   menu,
+  message,
+  tokenId,
   sizetype,
   p,
   country,
@@ -474,8 +507,12 @@ function Frame({
   const [hovered, hover] = useState(false);
   const [rnd] = useState(() => Math.random());
   const name = getUuid(url);
+
   // const title2 = title;
   const isActive = params?.id === name;
+  // useEffect(()=>{
+  //   console.log(metadataFileName);
+  // },[metadataFileName])
   useCursor(hovered);
   useFrame((state, dt) => {
     // image.current.material.zoom =
@@ -541,17 +578,31 @@ function Frame({
             />
           </mesh>
           {menu && (
-            <Text
-              font={`${process.env.PUBLIC_URL}/font/NotoSansKR-Medium.otf`}
-              maxWidth={0.75}
-              anchorX="left"
-              anchorY="top"
-              position={[0.6, GOLDENRATIO / 2 + 0.1, 0]}
-              fontSize={0.045}
-              color="#C0DA8E"
-            >
-              {country + "\n" + city + "\n" + weather + "\n" + address}
-            </Text>
+            <>
+              <Text
+                font={`${process.env.PUBLIC_URL}/font/NotoSansKR-Medium.otf`}
+                maxWidth={0.75}
+                anchorX="left"
+                anchorY="top"
+                position={[0.6, GOLDENRATIO / 2 + 0.1, 0]}
+                fontSize={0.045}
+                color="#C0DA8E"
+              >
+                {country +
+                  "\n" +
+                  "\n" +
+                  city +
+                  "\n" +
+                  "\n" +
+                  weather +
+                  "\n" +
+                  "\n" +
+                  address +
+                  "\n" +
+                  "\n" +
+                  message}
+              </Text>
+            </>
           )}
         </>
       ) : (
@@ -588,17 +639,31 @@ function Frame({
             />
           </mesh>
           {menu && (
-            <Text
-              font={`${process.env.PUBLIC_URL}/font/NotoSansKR-Medium.otf`}
-              maxWidth={0.75}
-              anchorX="left"
-              anchorY="top"
-              position={[1.3, GOLDENRATIO / 2 - 0.3, 0]}
-              fontSize={0.045}
-              color="#C0DA8E"
-            >
-              {country + "\n" + city + "\n" + weather + "\n" + address}
-            </Text>
+            <>
+              <Text
+                font={`${process.env.PUBLIC_URL}/font/NotoSansKR-Medium.otf`}
+                maxWidth={0.75}
+                anchorX="left"
+                anchorY="top"
+                position={[1.3, GOLDENRATIO / 2 - 0.2, 0]}
+                fontSize={0.045}
+                color="#C0DA8E"
+              >
+                {country +
+                  "\n" +
+                  "\n" +
+                  city +
+                  "\n" +
+                  "\n" +
+                  weather +
+                  "\n" +
+                  "\n" +
+                  address +
+                  "\n" +
+                  "\n" +
+                  message}
+              </Text>
+            </>
           )}
         </>
       )}
