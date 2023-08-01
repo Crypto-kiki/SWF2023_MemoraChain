@@ -49,6 +49,10 @@ const Parts = () => {
   const [selectedImageCanvas, setSelectedImageCanvas] = useState();
   const [selectedNFTSticker, setSelectedNFTSticker] = useState("none");
 
+  const ENCRYPT_KEY1 = process.env.REACT_APP_ENCRYPT_KEY1;
+  const ENCRYPT_KEY2 = process.env.REACT_APP_ENCRYPT_KEY2;
+  const ENCRYPT_KEY3 = process.env.REACT_APP_ENCRYPT_KEY3;
+
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isMenuOpen, setMenuOpen] = useState(false);
 
@@ -327,44 +331,12 @@ const Parts = () => {
   const [encryptedIpfs, setEncryptedIpfs] = useState();
   const [uploadFileName, setUploadFileName] = useState();
 
+  const [encryptedIpfs1, setEncryptedIpfs1] = useState();
+  const [encryptedIpfs2, setEncryptedIpfs2] = useState();
+  const [encryptedIpfs3, setEncryptedIpfs3] = useState();
+
   const PINATA_JWT = process.env.REACT_APP_PINATA_JWT; // Bearer Token 사용해야 됨.
   const ENCRYPT_KEY = process.env.REACT_APP_ENCRYPT_KEY;
-
-  // const upLoadImage = async () => {
-  //   if (selectedNFTImage && account) {
-  //     try {
-  //       // base64 데이터를 Blob으로 변환
-  //       const blob = await fetch(itemOnImage).then((res) => res.blob());
-
-  //       // Blob을 파일로 변환
-  //       const file = new File([blob], "image.jpg", { type: blob.type });
-  //       console.log(file);
-  //       const folderRef = ref(storage, account); // account 폴더에 대한 참조 생성
-  //       // account 폴더 내의 파일에 대한 참조 생성
-  //       const imageRef = ref(folderRef, v4() + selectedNFTImage.name);
-  //       // const imageRef = ref(storage, `images/selectedFile.name}`);
-  //       await uploadBytes(imageRef, file);
-
-  //       const metadata = {
-  //         customMetadata: {
-  //           account: account,
-  //         },
-  //       };
-  //       await updateMetadata(imageRef, metadata);
-
-  //       const url = await getDownloadURL(imageRef);
-  //       setDownloadURL(url);
-
-  //       // 업로드된 파일의 이름 받기
-  //       const fileName = imageRef.name;
-  //       console.log("Firebase Uploaded: ", fileName);
-  //       setUploadFileName(fileName);
-  //       console.log(uploadFileName);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
 
   const upLoadImage = async () => {
     if (selectedNFTImage && account) {
@@ -394,90 +366,127 @@ const Parts = () => {
         // 업로드된 파일의 이름 받기
         const fileName = imageRef.name;
         setUploadFileName(fileName);
-        console.log("Firebase Uploaded: ", fileName);
-        console.log(uploadFileName);
+
+        await uploadToPinata();
       } catch (error) {
         console.log(error);
       }
     }
   };
+  // Pinata 업로드
+  const uploadToPinata = async (itemOnImage) => {
+    try {
+      // base64 데이터를 Blob으로 변환
+      const response = await fetch(itemOnImage);
+      const data = await response.blob();
 
-  // useEffect(() => {
-  //   if (downloadURL) {
-  //     console.log(uploadFileName);
-  //     uploadToPinata();
-  //   }
-  // }, [downloadURL]);
+      // base64 데이터 길이
+      const totalLength = data.size;
 
-  // // Pinata 업로드
-  // const uploadToPinata = async () => {
-  //   if (!itemOnImage || !downloadURL) {
-  //     console.log("파일을 선택해주세요.");
-  //     return;
-  //   }
+      // 데이터 분할 크기 계산 (예시로 3등분)
+      const chunkSize = Math.ceil(totalLength / 3);
 
-  //   try {
-  //     // base64 데이터를 Blob으로 변환
-  //     const response = await fetch(itemOnImage);
-  //     const data = await response.blob();
+      // 데이터를 세 개의 일부로 분할
+      const chunk1 = data.slice(0, chunkSize);
+      const chunk2 = data.slice(chunkSize, chunkSize * 2);
+      const chunk3 = data.slice(chunkSize * 2);
 
-  //     // Blob을 File 객체로 변환
-  //     const file = new File([data], itemOnImage.name, { type: data.type });
+      // 각 조각을 Uint8Array로 변환
+      const chunk1Data = await chunk1.arrayBuffer();
+      const chunk2Data = await chunk2.arrayBuffer();
+      const chunk3Data = await chunk3.arrayBuffer();
 
-  //     const formData = new FormData();
-  //     formData.append("file", file);
+      // 각 데이터를 WordArray로 변환
+      const wordArray1 = CryptoJS.lib.WordArray.create(chunk1Data);
+      const wordArray2 = CryptoJS.lib.WordArray.create(chunk2Data);
+      const wordArray3 = CryptoJS.lib.WordArray.create(chunk3Data);
 
-  //     const options = JSON.stringify({
-  //       cidVersion: 0,
-  //     });
-  //     formData.append("pinataOptions", options);
+      // 각각의 데이터를 암호화하여 FormData에 추가
+      const encrypted1 = CryptoJS.AES.encrypt(
+        wordArray1,
+        ENCRYPT_KEY1
+      ).toString();
+      const encrypted2 = CryptoJS.AES.encrypt(
+        wordArray2,
+        ENCRYPT_KEY2
+      ).toString();
+      const encrypted3 = CryptoJS.AES.encrypt(
+        wordArray3,
+        ENCRYPT_KEY3
+      ).toString();
 
-  //     const res = await axios.post(
-  //       "https://api.pinata.cloud/pinning/pinFileToIPFS",
-  //       formData,
-  //       {
-  //         maxBodyLength: "Infinity",
-  //         headers: {
-  //           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-  //           Authorization: `Bearer ${PINATA_JWT}`,
-  //         },
-  //       }
-  //     );
+      // 각 파일 객체를 FormData에 추가
+      const formData1 = new FormData();
+      formData1.append("file", chunk1);
+      formData1.append("encryptedData", encrypted1);
 
-  //     setIpfsHash(res.data.IpfsHash);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      const formData2 = new FormData();
+      formData2.append("file", chunk2);
+      formData2.append("encryptedData", encrypted2);
 
-  // useEffect(() => {
-  //   if (ipfsHash) {
-  //     encryptIpfs();
-  //     // decryptIpfs();
-  //   }
-  // }, [ipfsHash]);
+      const formData3 = new FormData();
+      formData3.append("file", chunk3);
+      formData3.append("encryptedData", encrypted3);
 
-  // // 이미지 주소 CID값 (IpfsHash) 암호화
-  // const encryptIpfs = () => {
-  //   const encrypted = CryptoJS.AES.encrypt(
-  //     `https://teal-rapid-mink-528.mypinata.cloud/ipfs/${ipfsHash}`,
-  //     ENCRYPT_KEY
-  //   );
-  //   setEncryptedIpfs(encrypted.toString());
-  // };
+      // 각각의 업로드를 수행
+      const options = JSON.stringify({
+        cidVersion: 0,
+      });
 
-  // useEffect(() => {
-  //   if (encryptedIpfs) {
-  //     uploadMetadata();
-  //     // decryptIpfs();
-  //   }
-  // }, [encryptedIpfs]);
+      const res1 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData1,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData1._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      const res2 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData2,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData2._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      const res3 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData3,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData3._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      // 업로드 결과를 이용하여 처리
+      console.log("업로드 결과 1:", res1.data.IpfsHash);
+      console.log("업로드 결과 2:", res2.data.IpfsHash);
+      console.log("업로드 결과 3:", res3.data.IpfsHash);
+
+      setEncryptedIpfs1(encrypted1);
+      setEncryptedIpfs2(encrypted2);
+      setEncryptedIpfs3(encrypted3);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    if (uploadFileName) {
+    if (encryptedIpfs3) {
       uploadMetadata();
     }
-  }, [uploadFileName]);
+  }, [encryptedIpfs3]);
 
   // 메타데이터 업로드
   const uploadMetadata = async () => {
@@ -485,7 +494,6 @@ const Parts = () => {
       const metadata = {
         description: "Unforgettable Memories, Forever Immutable",
         image: downloadURL,
-        // EncryptedIPFSImgUrl: encryptedIpfs,
         Account: account,
         attributes: [
           {
@@ -533,6 +541,9 @@ const Parts = () => {
             value: selectedImageInfo[10].value,
           },
         ],
+        EncryptedIPFSImgUrl1: encryptedIpfs1,
+        EncryptedIPFSImgUrl2: encryptedIpfs2,
+        EncryptedIPFSImgUrl3: encryptedIpfs3,
       };
 
       const metadataRes = await axios.post(
@@ -585,7 +596,9 @@ const Parts = () => {
   const initialize = () => {
     setSelectedNFTImage("");
     setIpfsHash("");
-    // setEncryptedIpfs("");
+    setEncryptedIpfs1("");
+    setEncryptedIpfs2("");
+    setEncryptedIpfs3("");
     setDownloadURL(null);
     setMetadataURI("");
     setSize("");
@@ -804,15 +817,17 @@ const Parts = () => {
           <div className="h-screen fixed top-0 left-0 right-0 md:bottom-0 backdrop-filter backdrop-blur-sm flex flex-col justify-center modal p-5 md:px-10 ">
             {downloadURL && (
               <motion.div
-                className={`fixed top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-sm flex flex-col justify-center items-center  z-20`}
+                className={`fixed top-0 left-0 right-0 bottom-0 backdrop-filter backdrop-blur-sm flex flex-col justify-center items-center z-20`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 2, ease: "easeIn" }}
               >
-                <img
-                  src={`${process.env.PUBLIC_URL}/image/mint/memorachainGIF.gif`}
-                />
+                <div className="flex flex-col justify-center items-center h-2/3 w-2/3 bg-slate-500 border-8 border-white">
+                  <div className="text-5xl font-bold font-habin animate-pulse">
+                    Minting...
+                  </div>
+                </div>
               </motion.div>
             )}
             <div className="pl-4 flex flex-col">
@@ -864,7 +879,7 @@ const Parts = () => {
                   // 가로
                   <>
                     <div className="h-full w-full flex flex-col justify-center md:justify-between items-center ">
-                      <div className="h-[80%] md:h-[80%] w-[70%] md:w-[65%] flex justify-center items-center mt-[5%] itemModalBackgroundWide">
+                      <div className="h-[80%] md:h-[80%] w-[70%] md:w-[85%] flex justify-center items-center mt-[5%] itemModalBackgroundWide">
                         {selectedNFTSticker == "none" ? (
                           selectedImageCanvas === 0 ? (
                             <ItemCanvas

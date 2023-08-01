@@ -26,8 +26,6 @@ function ItemCanvas7({ size, img, setEnd, setItemOnImage, ItemIndex }) {
 
   // 이미지 그리기
   useEffect(() => {
-    //이미지 불러오기
-
     // 캔버스에 그리기
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");

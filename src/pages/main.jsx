@@ -181,12 +181,12 @@ const Main = () => {
           </header>
         </div>
         <div className="bg-[#F3EED4] md:h-1/5 h-48 flex flex-col justify-center items-center ">
-          <div className="md:text-5xl text-2xl tracking-widest font-habin">
+          <div className="md:text-[80px] text-2xl tracking-widest font-habin">
             Memora Chain
           </div>
         </div>
-        <div className="bg-[#E3C9B2] mainSecondDiv mainmobileSecondDiv   h-[40vh] md:h-[80vh] relative justify-center items-center my-2 md:mt-3"></div>
-        <div className="mainmobileThirdDiv mainThirdDiv w-full h-[48vh] md:h-[90vh]  md:mt-3"></div>
+        <div className="bg-[#E3C9B2] mainSecondDiv mainmobileSecondDiv h-[40vh] md:h-[80vh] relative justify-center items-center my-2 md:mt-3"></div>
+        <div className="mainmobileThirdDiv mainThirdDiv w-full h-[48vh] md:h-[1400px] md:mt-3"></div>
         <div className="flex w-full flex-col md:w-full md:flex-row items-center md:justify-center  font-habin  mt-2 md:mt-3 bg-gradient-to-b from-[#85A0BD] from-78.1% via-[#CEC3B7] via-86% via-[#D2B9A6] to-[#B4958D] to-100%  px-15 md:px-20 py-12 md:pl-32 md:pr-16">
           <div className="md:hidden flex md:font-semibold text-2xl mt-10 text-[#F3EED4]">
             Where time and space meet

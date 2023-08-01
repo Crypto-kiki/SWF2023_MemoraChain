@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useThree} from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 
 const CameraControls = () => {
   const { camera } = useThree();
@@ -15,16 +15,16 @@ const CameraControls = () => {
       keyState.current[event.key] = false;
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
-  useFrame(() => {    
+  useFrame(() => {
     if (!camera) return;
 
     if (keyState.current.w) camera.position.z -= moveSpeed;

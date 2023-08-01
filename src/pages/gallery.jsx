@@ -263,12 +263,12 @@ const Gallery = () => {
   return (
     <>
       {loading ? (
-        <div class="flex justify-center items-center h-screen bg-gray-900">
-          <div class="relative">
-            <div class="loading-text text-white font-bold text-3xl animate-pulse">
+        <div className="flex justify-center items-center h-screen bg-gray-900">
+          <div className="relative">
+            <div className="loading-text text-white font-bold text-3xl animate-pulse">
               Loading...
             </div>
-            <div class="w-full h-1 bg-white absolute bottom-0 left-0 before:content before:block before:w-full before:h-1 before:bg-blue-500 before:animate-pulse"></div>
+            <div className="w-full h-1 bg-white absolute bottom-0 left-0 before:content before:block before:w-full before:h-1 before:bg-blue-500 before:animate-pulse"></div>
           </div>
         </div>
       ) : tokenIds.length === wide.length + length.length && show ? (
@@ -370,7 +370,11 @@ function Frames({
     if (!start) {
       if (clicked.current) {
         clicked.current.parent.updateWorldMatrix(true, true);
-        if (images.sizetype == 1) {
+        if (
+          clicked.current &&
+          clicked.current.scale &&
+          clicked.current.scale.y > 1.2
+        ) {
           clicked.current.parent.localToWorld(
             p.set(0.7, GOLDENRATIO / 2, 1.25)
           );

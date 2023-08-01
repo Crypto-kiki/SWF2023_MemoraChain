@@ -3,6 +3,8 @@ import { AccountContext } from "../AccountContext";
 import { useCallback, useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import { arrayBufferToWordArray } from "crypto-js/lib-typedarrays";
+
 import { storage } from "../firebase";
 import {
   ref,
@@ -23,7 +25,9 @@ const Mint = () => {
   const { account, setAccount } = useContext(AccountContext);
   const GOOGLEMAP_API = process.env.REACT_APP_GOOGLEMAP_API;
   const PINATA_JWT = process.env.REACT_APP_PINATA_JWT; // Bearer Token 사용해야 됨.
-  // const ENCRYPT_KEY = process.env.REACT_APP_ENCRYPT_KEY;
+  const ENCRYPT_KEY1 = process.env.REACT_APP_ENCRYPT_KEY1;
+  const ENCRYPT_KEY2 = process.env.REACT_APP_ENCRYPT_KEY2;
+  const ENCRYPT_KEY3 = process.env.REACT_APP_ENCRYPT_KEY3;
 
   const web3 = new Web3(window.ethereum);
   const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
@@ -225,7 +229,9 @@ const Mint = () => {
 
   const [selectedFile, setSelectedFile] = useState();
   const [ipfsHash, setIpfsHash] = useState();
-  const [encryptedIpfs, setEncryptedIpfs] = useState();
+  const [encryptedIpfs1, setEncryptedIpfs1] = useState();
+  const [encryptedIpfs2, setEncryptedIpfs2] = useState();
+  const [encryptedIpfs3, setEncryptedIpfs3] = useState();
   const [canvasIndex, setCanvasIndex] = useState();
 
   // const [decryptedIpfs, setDecryptedIpfs] = useState();
@@ -329,7 +335,7 @@ const Mint = () => {
         const fileName = imageRef.name;
         console.log("Firebase Uploaded: ", fileName);
         setUploadFileName(fileName);
-        console.log(uploadFileName);
+        await uploadToPinata();
       } catch (error) {
         console.log(error);
       }
@@ -344,52 +350,125 @@ const Mint = () => {
   };
 
   // useEffect(() => {
-  //   if (downloadURL) {
+  //   if (uploadFileName) {
   //     console.log(uploadFileName);
   //     uploadToPinata();
   //   }
-  // }, [downloadURL]);
+  // }, [uploadFileName]);
 
   // Pinata 업로드
-  // const uploadToPinata = async () => {
-  //   if (!selectedFile || !downloadURL) {
-  //     console.log("파일을 선택해주세요.");
-  //     return;
-  //   }
+  const uploadToPinata = async (canvasImgurl) => {
+    // if (!selectedFile || !uploadFileName) {
+    //   console.log("파일을 선택해주세요.");
+    //   return;
+    // }
 
-  //   try {
-  //     // base64 데이터를 Blob으로 변환
-  //     const response = await fetch(canvasImgurl);
-  //     const data = await response.blob();
+    try {
+      // base64 데이터를 Blob으로 변환
+      const response = await fetch(canvasImgurl);
+      const data = await response.blob();
 
-  //     // Blob을 File 객체로 변환
-  //     const file = new File([data], selectedFile.name, { type: data.type });
+      // base64 데이터 길이
+      const totalLength = data.size;
 
-  //     const formData = new FormData();
-  //     formData.append("file", file);
+      // 데이터 분할 크기 계산 (예시로 3등분)
+      const chunkSize = Math.ceil(totalLength / 3);
 
-  //     const options = JSON.stringify({
-  //       cidVersion: 0,
-  //     });
-  //     formData.append("pinataOptions", options);
+      // 데이터를 세 개의 일부로 분할
+      const chunk1 = data.slice(0, chunkSize);
+      const chunk2 = data.slice(chunkSize, chunkSize * 2);
+      const chunk3 = data.slice(chunkSize * 2);
 
-  //     const res = await axios.post(
-  //       "https://api.pinata.cloud/pinning/pinFileToIPFS",
-  //       formData,
-  //       {
-  //         maxBodyLength: "Infinity",
-  //         headers: {
-  //           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-  //           Authorization: `Bearer ${PINATA_JWT}`,
-  //         },
-  //       }
-  //     );
+      // 각 조각을 Uint8Array로 변환
+      const chunk1Data = await chunk1.arrayBuffer();
+      const chunk2Data = await chunk2.arrayBuffer();
+      const chunk3Data = await chunk3.arrayBuffer();
 
-  //     setIpfsHash(res.data.IpfsHash);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      // 각 데이터를 WordArray로 변환
+      const wordArray1 = CryptoJS.lib.WordArray.create(chunk1Data);
+      const wordArray2 = CryptoJS.lib.WordArray.create(chunk2Data);
+      const wordArray3 = CryptoJS.lib.WordArray.create(chunk3Data);
+
+      // 각각의 데이터를 암호화하여 FormData에 추가
+      const encrypted1 = CryptoJS.AES.encrypt(
+        wordArray1,
+        ENCRYPT_KEY1
+      ).toString();
+      const encrypted2 = CryptoJS.AES.encrypt(
+        wordArray2,
+        ENCRYPT_KEY2
+      ).toString();
+      const encrypted3 = CryptoJS.AES.encrypt(
+        wordArray3,
+        ENCRYPT_KEY3
+      ).toString();
+
+      // 각 파일 객체를 FormData에 추가
+      const formData1 = new FormData();
+      formData1.append("file", chunk1);
+      formData1.append("encryptedData", encrypted1);
+
+      const formData2 = new FormData();
+      formData2.append("file", chunk2);
+      formData2.append("encryptedData", encrypted2);
+
+      const formData3 = new FormData();
+      formData3.append("file", chunk3);
+      formData3.append("encryptedData", encrypted3);
+
+      // 각각의 업로드를 수행
+      const options = JSON.stringify({
+        cidVersion: 0,
+      });
+
+      const res1 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData1,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData1._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      const res2 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData2,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData2._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      const res3 = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData3,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData3._boundary}`,
+            Authorization: `Bearer ${PINATA_JWT}`,
+          },
+        }
+      );
+
+      // 업로드 결과를 이용하여 처리
+      console.log("업로드 결과 1:", res1.data.IpfsHash);
+      console.log("업로드 결과 2:", res2.data.IpfsHash);
+      console.log("업로드 결과 3:", res3.data.IpfsHash);
+
+      setEncryptedIpfs1(encrypted1);
+      setEncryptedIpfs2(encrypted2);
+      setEncryptedIpfs3(encrypted3);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // useEffect(() => {
   //   if (ipfsHash) {
@@ -401,27 +480,25 @@ const Mint = () => {
   // 이미지 주소 CID값 (IpfsHash) 암호화
   // const encryptIpfs = () => {
   //   const encrypted = CryptoJS.AES.encrypt(
-  //     `https://teal-rapid-mink-528.mypinata.cloud/ipfs/${ipfsHash}`,
-  //     ENCRYPT_KEY
+  //     `https://swf2023_memorachain.mypinata.cloud/ipfs/${ipfsHash}`,
+  //     ENCRYPT_KEY1
   //   );
   //   setEncryptedIpfs(encrypted.toString());
   // };
 
   useEffect(() => {
-    if (uploadFileName) {
+    if (encryptedIpfs3) {
       uploadMetadata();
       // decryptIpfs();
     }
-  }, [uploadFileName]);
+  }, [encryptedIpfs3]);
 
   // 메타데이터 업로드
   const uploadMetadata = async () => {
     try {
       const metadata = {
         description: "Unforgettable Memories, Forever Immutable",
-        // external_url: downloadURL,
         image: downloadURL,
-        // EncryptedIPFSImgUrl: encryptedIpfs,
         Account: account,
         attributes: [
           {
@@ -469,6 +546,9 @@ const Mint = () => {
             value: canvasIndex,
           },
         ],
+        EncryptedIPFSImgUrl1: encryptedIpfs1,
+        EncryptedIPFSImgUrl2: encryptedIpfs2,
+        EncryptedIPFSImgUrl3: encryptedIpfs3,
       };
 
       const metadataRes = await axios.post(
@@ -518,7 +598,9 @@ const Mint = () => {
   const initialize = () => {
     setSelectedFile("");
     setIpfsHash("");
-    // setEncryptedIpfs("");
+    setEncryptedIpfs1("");
+    setEncryptedIpfs2("");
+    setEncryptedIpfs3("");
     setDownloadURL(null);
     setMetadataURI("");
     setSelectedFileURL("");
@@ -745,12 +827,11 @@ const Mint = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 2, ease: "easeIn" }}
             >
-              <div className="flex flex-col justify-center items-center h-1/2 w-1/2 bg-yellow-200">
-                <div className="text-3xl font-habin">Minting...</div>
+              <div className="flex flex-col justify-center items-center h-2/3 w-2/3 bg-slate-200 border-8 border-white">
+                <div className="text-5xl font-bold font-habin animate-pulse">
+                  Minting...
+                </div>
               </div>
-              {/* <img
-                src={`${process.env.PUBLIC_URL}/image/mint/memorachainGIF.gif`}
-              /> */}
             </motion.div>
           )}
           {!selectedFile ? (
