@@ -1,9 +1,7 @@
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import MainSlider from "../components/MainSlider";
 import { AccountContext } from "../AccountContext";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { IoIosClose } from "react-icons/io";
 import { FiPower } from "react-icons/fi";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
@@ -137,7 +135,7 @@ const Main = () => {
                         <div>STICKER</div>
                       </Link>
                       {account && (
-                        <Link to="/myPage" className="text-lg">
+                        <Link to="/gallery" className="text-lg">
                           MY PAGE
                         </Link>
                       )}
@@ -165,7 +163,7 @@ const Main = () => {
                 <div className="mx-10">STICKER</div>
               </Link>
               <Link
-                to={account ? "/mypage" : ""}
+                to={account ? "/gallery" : ""}
                 onClick={!account ? connectWithMetamask : null}
               >
                 {account ? (
@@ -182,8 +180,10 @@ const Main = () => {
             </div>
           </header>
         </div>
-        <div className="bg-[#F3EED4]">
-          <div>Memora Chain</div>
+        <div className="bg-[#F3EED4] md:h-1/5 h-48 flex flex-col justify-center items-center ">
+          <div className="md:text-5xl text-2xl tracking-widest font-habin">
+            Memora Chain
+          </div>
         </div>
         <div className="bg-[#E3C9B2] mainSecondDiv mainmobileSecondDiv   h-[40vh] md:h-[80vh] relative justify-center items-center my-2 md:mt-3"></div>
         <div className="mainmobileThirdDiv mainThirdDiv w-full h-[48vh] md:h-[90vh]  md:mt-3"></div>
@@ -217,18 +217,18 @@ const Main = () => {
           </div>
         </div>
 
-        <div className="hidden md:flex">
+        {/* <div className="hidden md:flex">
           <img
             src={`${process.env.PUBLIC_URL}/image/mainFourthDiv.png`}
             className="w-full mt-3"
           />
-        </div>
-        <div className="flex md:hidden">
+        </div> */}
+        {/* <div className="flex md:hidden">
           <img
             src={`${process.env.PUBLIC_URL}/image/AboutUs.png`}
             className="w-full mt-1"
           />
-        </div>
+        </div> */}
 
         <div className="flex flex-col justify-center items-center mt-1 md:mt-3 bg-[#96A9C2]  md:pt-20 pb-10">
           <img
@@ -259,7 +259,7 @@ const Main = () => {
           </div>
           <div className="flex flex-col md:ml-10 text-xs md:text-base justify-center items-center">
             <div>2023. 06. 23</div>
-            <div>copyright@ made by kimshinjo</div>
+            <div>copyright@ made by Memora Chain</div>
           </div>
         </div>
       </div>

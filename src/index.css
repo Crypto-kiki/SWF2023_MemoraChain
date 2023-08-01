@@ -187,35 +187,6 @@
   background-size: cover;
 }
 
-/* @media (min-width: 768px) {
-  .mintBackground {
-    background-image: url(../public/image/mint/background.png);
-    background-position: 0 0;
-    background-repeat: repeat-x;
-    background-size: auto 100%;
-    animation: moveBackground 20s linear infinite;
-  }
-} */
-
-@media (max-width: 767px) {
-  .mintmobileBackground {
-    background-image: url(../public/image/mint/backgroundmobile.png);
-    background-position: 0 0;
-    background-repeat: repeat-x;
-    background-size: auto 100%;
-    animation: moveBackground 20s linear infinite;
-  }
-}
-
-@keyframes moveBackground {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: -100% 0;
-  }
-}
-
 /* video effect */
 .video {
   opacity: 0;
@@ -224,24 +195,6 @@
 
 .video.show {
   opacity: 1;
-}
-
-@media (min-width: 768px) {
-  .partsBackground {
-    background-image: url(../public/image/parts/background.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-}
-
-@media (max-width: 767px) {
-  .partsmobileBackground {
-    background-image: url(../public/image/parts/partsbackground.png);
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    background-size: contain 100vh;
-  }
 }
 
 /* 스크롤 바 커스텀 */

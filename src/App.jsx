@@ -3,7 +3,7 @@ import { AccountContext } from "./AccountContext";
 import { useEffect, useState } from "react";
 import Main from "./pages/main";
 import Mint from "./pages/mint";
-import MyPage from "./pages/myPage";
+import Gallery from "./pages/gallery";
 import Parts from "./pages/parts";
 import { AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,7 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/mint" element={<Mint />} />
             <Route path="/partsshop" element={<Parts />} />
-            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/gallery" element={<Gallery />} />
           </Routes>
         </AnimatePresence>
       </AccountContext.Provider>

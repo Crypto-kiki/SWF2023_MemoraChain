@@ -17,6 +17,7 @@ export default function SliderComponent({
   imgurl4,
   imgurl5,
   imgurl6,
+  imgurl7,
   setIndex,
   size,
 }) {
@@ -90,6 +91,15 @@ export default function SliderComponent({
                 />
               </div>
             </SwiperSlide>
+            <SwiperSlide>
+              <div className="flex items-center justify-center">
+                <img
+                  className="object-fill w-[230px] md:w-[550px] "
+                  src={`${imgurl7}`}
+                  alt="7"
+                />
+              </div>
+            </SwiperSlide>
           </>
         ) : (
           <>
@@ -143,6 +153,15 @@ export default function SliderComponent({
                 <img
                   className="w-[250px] md:w-[900px]"
                   src={`${imgurl6}`}
+                  alt="6"
+                />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="my-[30px] md:my-[175px] flex justify-center items-center ">
+                <img
+                  className="w-[250px] md:w-[900px]"
+                  src={`${imgurl7}`}
                   alt="6"
                 />
               </div>

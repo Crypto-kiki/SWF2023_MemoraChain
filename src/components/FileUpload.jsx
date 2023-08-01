@@ -6,6 +6,7 @@ import CanvasForm3 from "./CanvasForm/CanvasForm3";
 import CanvasForm4 from "./CanvasForm/CanvasForm4";
 import CanvasForm5 from "./CanvasForm/CanvasForm5";
 import CanvasForm6 from "./CanvasForm/CanvasForm6";
+import CanvasForm7 from "./CanvasForm/CanvasForm7";
 import SliderComponent from "./CanvasForm/SliderComponent";
 
 const FileUpload = ({
@@ -30,6 +31,7 @@ const FileUpload = ({
   const [CanvasImage4, setCanvasImage4] = useState();
   const [CanvasImage5, setCanvasImage5] = useState();
   const [CanvasImage6, setCanvasImage6] = useState();
+  const [CanvasImage7, setCanvasImage7] = useState();
   const [index, setIndex] = useState(0);
   const [size, setSize] = useState([]);
   const [end, setEnd] = useState(false);
@@ -89,6 +91,9 @@ const FileUpload = ({
     } else if (index == 5) {
       setUrl(CanvasImage6);
       setCanvasIndex(5);
+    } else if (index == 6) {
+      setUrl(CanvasImage7);
+      setCanvasIndex(6);
     }
   };
 
@@ -145,6 +150,7 @@ const FileUpload = ({
               imgurl4={CanvasImage4}
               imgurl5={CanvasImage5}
               imgurl6={CanvasImage6}
+              imgurl7={CanvasImage7}
               setIndex={setIndex}
               size={size}
             />
@@ -245,6 +251,24 @@ const FileUpload = ({
           />
           <CanvasForm6
             img={setCanvasImage6}
+            lat={lat}
+            lon={lon}
+            country={country}
+            countryCode={countryCode}
+            city={city}
+            address={address}
+            account={account}
+            file={file}
+            size={size}
+            setEnd={setEnd}
+            setSize={setSize}
+            message={message}
+            weather={weather}
+            temperature={temperature}
+            time={time}
+          />
+          <CanvasForm7
+            img={setCanvasImage7}
             lat={lat}
             lon={lon}
             country={country}

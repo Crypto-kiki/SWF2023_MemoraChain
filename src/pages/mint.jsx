@@ -560,7 +560,7 @@ const Mint = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1, ease: "easeInOut" }}
     >
-      <div className="w-full flex flex-col font-habin">
+      <div className="w-full flex flex-col font-habin bg-slate-300">
         <header className="flex justify-between items-center px-3 md:px-10 font-habin md:text-2xl tracking-wider text-[#686667]">
           <Link to="/">
             <div className="mt-3">
@@ -642,7 +642,7 @@ const Mint = () => {
               <div className="mx-10">Sticker</div>
             </Link>
             <Link
-              to={account ? "/mypage" : ""}
+              to={account ? "/gallery" : ""}
               onClick={!account ? connectWithMetamask : null}
             >
               {account ? (
@@ -720,7 +720,7 @@ const Mint = () => {
                 <label className="h-full my-4 ">
                   <textarea
                     name="message"
-                    className="h-full w-full placeholder-black pt-[12%] bg-transparent border  border-[#8b8b8b] text-center shadow-lg"
+                    className="h-full w-full placeholder-black pt-[12%] bg-transparent border border-[#8b8b8b] text-center shadow-lg"
                     maxLength={100}
                     placeholder="Write this moment"
                   />
@@ -745,9 +745,12 @@ const Mint = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 2, ease: "easeIn" }}
             >
-              <img
+              <div className="flex flex-col justify-center items-center h-1/2 w-1/2 bg-yellow-200">
+                <div className="text-3xl font-habin">Minting...</div>
+              </div>
+              {/* <img
                 src={`${process.env.PUBLIC_URL}/image/mint/memorachainGIF.gif`}
-              />
+              /> */}
             </motion.div>
           )}
           {!selectedFile ? (
@@ -760,7 +763,7 @@ const Mint = () => {
               <div className="flex md:hidden">Samples by your image</div>
             </div>
           ) : (
-            <div className="">
+            <div>
               <FileUpload
                 file={selectedFileURL}
                 setUrl={setCanvasImgurl}
